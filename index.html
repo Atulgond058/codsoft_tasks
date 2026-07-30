@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Pro - Task Management Application</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header class="header">
+        <div class="header-container">
+            <div class="brand-box">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title">TaskMaster Pro</h1>
+                    <p class="brand-subtitle">Organize your tasks efficiently</p>
+                </div>
+            </div>
+            
+            <!-- Dark Mode Toggle Button -->
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <!-- Stats Banner -->
+        <div class="stats-grid">
+            <div class="card stat-card">
+                <div>
+                    <p class="stat-title">Total Tasks</p>
+                    <h2 id="total-count" class="stat-value">0</h2>
+                </div>
+                <div class="stat-icon-box bg-blue">
+                    <i class="fa-solid fa-tasks"></i>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div>
+                    <p class="stat-title text-amber">Pending Tasks</p>
+                    <h2 id="pending-count" class="stat-value text-amber">0</h2>
+                </div>
+                <div class="stat-icon-box bg-amber text-amber">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div>
+                    <p class="stat-title text-emerald">Completed Tasks</p>
+                    <h2 id="completed-count" class="stat-value text-emerald">0</h2>
+                </div>
+                <div class="stat-icon-box bg-emerald text-emerald">
+                    <i class="fa-solid fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Task Form Card -->
+        <div class="card form-card">
+            <h2 class="form-title">
+                <i class="fa-solid fa-plus-circle form-title-icon"></i>
+                Add New Task
+            </h2>
+            <form id="task-form" class="task-form-container">
+                <div class="form-row">
+                    <div class="flex-1">
+                        <input type="text" id="task-title" placeholder="What needs to be done? *" class="input-control">
+                        <p id="validation-error" class="validation-err hidden">Task title is required!</p>
+                    </div>
+
+                    <div class="select-group">
+                        <select id="task-category" class="input-control">
+                            <option value="Personal">📍 Personal</option>
+                            <option value="Work">💼 Work</option>
+                            <option value="Shopping">🛒 Shopping</option>
+                            <option value="Health">❤️ Health</option>
+                            <option value="Other">🏷️ Other</option>
+                        </select>
+
+                        <select id="task-priority" class="input-control">
+                            <option value="Low">🟢 Low Priority</option>
+                            <option value="Medium" selected>🟡 Medium Priority</option>
+                            <option value="High">🔴 High Priority</option>
+                        </select>
+
+                        <input type="date" id="task-duedate" class="input-control">
+                    </div>
+                </div>
+
+                <div class="btn-wrapper">
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-plus"></i> Add Task
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="card toolbar-card">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search tasks..." class="input-control search-input">
+            </div>
+
+            <div class="filter-controls">
+                <div class="tab-group">
+                    <button data-filter="all" class="filter-tab active-tab">All</button>
+                    <button data-filter="pending" class="filter-tab">Pending</button>
+                    <button data-filter="completed" class="filter-tab">Completed</button>
+                </div>
+
+                <select id="filter-priority" class="input-control filter-select">
+                    <option value="all">All Priorities</option>
+                    <option value="High">High Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+                </select>
+
+                <select id="filter-category" class="input-control filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Work">Work</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Health">Health</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Task List Output -->
+        <ul id="task-list" class="task-ul"></ul>
+
+        <!-- Empty State Message -->
+        <div id="empty-state" class="card empty-state-card hidden">
+            <i class="fa-solid fa-clipboard-list empty-state-icon"></i>
+            <h3 class="empty-state-title">No tasks found</h3>
+            <p class="empty-state-desc">Try creating a new task or adjusting your filter criteria.</p>
+        </div>
+    </main>
+
+    <!-- Modal for Editing Task -->
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="card modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fa-solid fa-pen-to-square form-title-icon"></i> Edit Task
+                </h3>
+                <button id="close-modal" class="modal-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="edit-form" class="task-form-container">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="modal-label">Task Title</label>
+                    <input type="text" id="edit-title" class="input-control">
+                    <p id="edit-validation-error" class="validation-err hidden">Task title cannot be empty!</p>
+                </div>
+
+                <div class="select-group">
+                    <div>
+                        <label class="modal-label">Category</label>
+                        <select id="edit-category" class="input-control">
+                            <option value="Personal">Personal</option>
+                            <option value="Work">Work</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="modal-label">Priority</label>
+                        <select id="edit-priority" class="input-control">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="modal-label">Due Date</label>
+                        <input type="date" id="edit-duedate" class="input-control">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="cancel-edit" class="btn-primary btn-cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
