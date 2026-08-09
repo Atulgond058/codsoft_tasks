@@ -1440,6 +1440,8 @@ footer .container {
 /* Responsive Media Queries */
 @media (max-width: 768px) {
     .hero {
+        justify-content: center;
+        align-items: center;
         grid-template-columns: 1fr;
         text-align: center;
         padding-top: 8rem;
