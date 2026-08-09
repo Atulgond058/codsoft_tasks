@@ -805,9 +805,11 @@ main {
     gap: 25px;
   }
   .btn-solid{
+    color: black;
     background-color: #eab308;
   }
   
+
   /* Mobile Alignment Fix */
   @media (max-width: 768px) {
     .btn-solid, .btn-outline{
